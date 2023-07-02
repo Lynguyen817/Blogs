@@ -44,9 +44,11 @@ def delete(post_id):
     for post in blog_posts:
         if post['id'] == post_id:
             blog_posts.remove(post)
+
+    with open('job_posts.json', 'w') as newfile:
+        json.dump(blog_posts, newfile, indent=4)
+
     # Redirect back to the home page
-    print(blog_posts)
-    print(redirect(url_for('index')))
     return redirect(url_for('index'))
 
 
@@ -62,22 +64,22 @@ def update(post_id):
     except FileNotFoundError:
         return "File not found", 404
 
-    for post in blog_posts:
-        if post['id'] == post_id:
-            if request.method == 'POST':
+    if request.method == 'POST':
+        for post in blog_posts:
+            if post['id'] == post_id:
                 # Update the post in the JSON file
                 post['author'] = request.form['author']
                 post['title'] = request.form['title']
                 post['content'] = request.form['content']
 
-                with open('job_posts.json', 'w')as fileobj:
-                    json.dump(blog_posts, fileobj, indent=4)
+        with open('job_posts.json', 'w')as fileobj:
+            json.dump(blog_posts, fileobj, indent=4)
 
-            # Redirect back to index
-            return redirect(url_for('index'))
-        # Else, it's a GET request. So display the update.html page
-        return render_template('update.html', post=post)
+        # Redirect back to index
+        return redirect(url_for('index'))
+    # Else, it's a GET request. So display the update.html page
+    return render_template('update.html', post=blog_posts)
 
 
 if __name__ == '__main__':
-    app.run()
+    app.run(host="0.0.0.0", port=5001)
