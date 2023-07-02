@@ -78,7 +78,9 @@ def update(post_id):
         # Redirect back to index
         return redirect(url_for('index'))
     # Else, it's a GET request. So display the update.html page
-    return render_template('update.html', post=blog_posts)
+    for post in blog_posts:
+        if post['id'] == post_id:
+            return render_template('update.html', post=post)
 
 
 if __name__ == '__main__':
